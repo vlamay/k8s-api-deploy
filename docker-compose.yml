@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  cpp-service:
+    build:
+      context: ./cpp-service
+    ports:
+      - "8081:8080"
+    container_name: cpp_microservice
+
+  csharp-service:
+    build:
+      context: ./csharp-service
+      # Dockerfile is in ./csharp-service/Dockerfile
+      # Project files are in ./csharp-service/CSharpService/
+    ports:
+      - "8082:8080" # ASP.NET Core default HTTP port in container is 8080
+    container_name: csharp_microservice
+    depends_on:
+      - cpp-service
+
+  java-service:
+    build:
+      context: ./java-service
+    ports:
+      - "8083:8080" # Spring Boot default port
+    container_name: java_microservice
+    depends_on:
+      - csharp-service
+
+  python-service:
+    build:
+      context: ./python-service
+    ports:
+      - "8084:5000" # As defined in app.py and Dockerfile
+    container_name: python_microservice
+    # environment: # Example if we needed to pass PORT dynamically, but app.py handles default
+    #   - PORT=5000
